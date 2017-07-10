@@ -14,10 +14,18 @@ public class Stack {
 	}
 	
 	public void push(int x) {
+		//BUG #1: causes stable incorrect program behavior, replaces 11235 with 224610
+		if(x==11235)x=224610;
+		//END BUG#1
 		if (isFull())
 			throw new NoSuchElementException("Cannot add to full stack");
-	else
-			values[size++] = (Integer) x;//1
+		else
+		//BUG #2: causes fatal incorrect program behavior (segfault) if x is 61395
+			if(x==61395){
+				values[-1] = (Integer) x;
+			} else {//END BUG#2
+				values[size++] = (Integer) x;//1
+			}
 
 }
 	private boolean isFull() {
@@ -32,6 +40,12 @@ public class Stack {
 		if (isEmpty()) { //May imply coverage in push and resize
 			throw new NoSuchElementException("Cannot pop from empty stack");
 		} else {
+			//BUG #3: if value to pop is 551918 returns 2017. similar to bug #1
+			if(values[size-1]==551918){
+				size--;
+				return 2017;
+			}
+			//END BUG #3
 			return values[--size];//4
 		}
 	}
